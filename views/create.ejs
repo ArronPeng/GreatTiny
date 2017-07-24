@@ -1,0 +1,52 @@
+<%- include('header') %>
+
+<div class="ui grid">
+  <div class="four wide column">
+    <a class="avatar avatar-link"
+       href="/posts?author=<%= user._id %>"
+       data-title="<%= user.name %> | <%= ({m: '男', f: '女', x: '保密'})[user.gender] %>"
+       data-content="<%= user.bio %>">
+      <img class="avatar" src="/img/<%= user.avatar %>">
+    </a>
+  </div>
+
+  <div class="eight wide column">
+    <form class="ui form segment" method="post" action="/posts">
+      <div class="field required">
+        <label>标题</label>
+        <input type="text" name="title">
+      </div>
+      <div class="field required">
+        <label>内容</label>
+        <script id="editor" name="content" type="text/plain" style="height:500px;"></script>
+      </div>
+      <input type="submit" class="ui button" value="发布">
+    </form>
+  </div>
+</div>
+<script type="text/javascript">  
+  
+    //实例化编辑器  
+    //建议使用工厂方法getEditor创建和引用编辑器实例，如果在某个闭包下引用该编辑器，直接调用UE.getEditor('editor')就能拿到相关的实例  
+    var ue = UE.getEditor('editor');  
+    $(function() {  
+    //初始化数据,读localstroage   
+  var allData = {};  
+  if (localStorage.getItem('ueditor_content')!=null && localStorage.getItem('ueditor_content')!="") {  
+        allData =   JSON.parse(localStorage.getItem('ueditor_content'));   
+    }   
+  
+  //延时加载数据 要等编辑器加载成功，反正我不延时的时候没有成功。  
+  setTimeout(function () {  
+        ue.setContent (allData)  
+  }, 500);   
+  
+  //离开页面或者刷新页面触发方法  
+    window.onbeforeunload = function() {  
+        localStorage.setItem("ueditor_content", JSON.stringify(ue.getContent()));  
+    }   
+  
+}) 
+  
+</script> 
+<%- include('footer') %>
